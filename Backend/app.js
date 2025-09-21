@@ -2,12 +2,16 @@ import express, {urlencoded} from "express";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import pool from './utils/connectMySql.js'
+import authRoute from "./Routes/authoRoutes.js";
 
 const app = express();
 dotenv.config();
 
-app.use(urlencoded({extended:true}));
-app.use('/',);
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+
+app.use('/',authRoute);
 
 mongoose.connect(process.env.MONOGOOSE_URI).then( async ()=>{
     console.log("Connected to MongoDB");

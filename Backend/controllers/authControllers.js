@@ -1,10 +1,16 @@
-import pool from './utils/connectMySql.js'
-import { hashFunction, hashComapre } from '../services/hashPassword.js';
+import { addUserDB } from '../services/handlingUsers.js';
+import { validationResult } from 'express-validator';
 
 
 export const registerUser = async (req , res, next)=>{
+    console.log("Request body:", req.body);
+    const errors = validationResult(req);
+    console.log(errors);
+    if(!errors.isEmpty()){
+        return res.status(400).json({ errors: errors.array() });
+    }
     const { name , email , password } = req.body;
-    const hashedPassword =  await hashFunction(password);
-    const [result] = await pool.query("INSERT INTO user (name, email, password_hash) VALUES (?, ?, ?)",[name ,email, hashedPassword]);
-    return { id: result.insertId, name, email, "message": "Successfully created" };
+    const [result] = await addUserDB({ name , email , password });
+    console.log(result);
+    res.send({ id: result.insertId, name, email, "message": "Successfully created" });
 }
