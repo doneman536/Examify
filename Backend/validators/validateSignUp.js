@@ -11,5 +11,11 @@ export const signUpValidator = [
       if(password !== req.body.confirmPassword){throw new Error("Passwords doesn't match")}
       return true; 
     }),
+
     body('name').trim().notEmpty().withMessage('Name is required')
+];
+
+export const loginUserValidator = [
+  body('email').isEmail().withMessage('Provide valid email'),
+  body('password').notEmpty().withMessage('Please enter password')
 ];

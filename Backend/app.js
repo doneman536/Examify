@@ -10,8 +10,9 @@ dotenv.config();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Routes
+app.use('/',authRoute); // Sign up and Login of user
 
-app.use('/',authRoute);
 
 mongoose.connect(process.env.MONOGOOSE_URI).then( async ()=>{
     console.log("Connected to MongoDB");
