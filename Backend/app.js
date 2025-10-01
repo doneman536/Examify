@@ -3,15 +3,27 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 import pool from './utils/connectMySql.js'
 import authRoute from "./Routes/authoRoutes.js";
+import session, { MemoryStore } from "express-session";
+import MongoStore from "connect-mongo";
 
 const app = express();
 dotenv.config();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(session({
+    secret : process.env.SESSION_KEY,
+    resave : false,
+    saveUninitialized : true,
+    store : MongoStore.create({mongoUrl:process.env.MONOGOOSE_URI,collectionName: "UserSessions"}),
+    cookie: { maxAge: 1000 * 60 * 60 * 3 }
+}))
 
 // Routes
 app.use('/',authRoute); // Sign up and Login of user
+app.get('/dashboard',(req,res)=>{
+    res.send(req.session);
+})
 
 
 mongoose.connect(process.env.MONOGOOSE_URI).then( async ()=>{

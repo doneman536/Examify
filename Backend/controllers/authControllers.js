@@ -1,6 +1,7 @@
 import { addUserDB ,findUserDB } from '../services/handlingUsers.js';
 import { validationResult } from 'express-validator';
 import { verifyPassword } from '../utils/hashPassword.js';
+import { sessionModel } from '../models /sessionsModel.js';
 
 export const registerUser = async (req , res, next)=>{
     // console.log("Request body:", req.body);
@@ -28,6 +29,8 @@ export const loginUser = async (req,res,next)=>{
         if(!user){return res.status(404).send({ error: "User not found" });}
         const isValid = await verifyPassword(password, user.password_hash);
         if(!isValid){return res.status(401).send({ error: "Incorrect password" });}
+        req.session.userId = user.id;
+        req.session.userType = user.role;
         res.send({'message':'Login Successful'});
     }
     catch(error){
